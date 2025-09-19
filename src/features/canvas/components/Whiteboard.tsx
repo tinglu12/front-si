@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
 import { Layer, Line, Stage, Text } from "react-konva";
 import { Button } from "@/components/ui/button";
 
@@ -6,11 +7,11 @@ const Whiteboard = () => {
   const [tool, setTool] = useState("pen");
   const [lines, setLines] = useState<any[]>([]);
   const isDrawing = useRef(false);
-
   const handleMouseDown = (e: any) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
-    setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+    if (!pos) return;
+    setLines((prev) => [...prev, { tool, points: [pos.x, pos.y] }]);
   };
 
   const handleTrash = () => {
@@ -24,17 +25,40 @@ const Whiteboard = () => {
     }
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
-    let lastLine = lines[lines.length - 1];
-    // add point
-    lastLine.points = lastLine.points.concat([point.x, point.y]);
+    if (!point) return;
 
-    // replace last
-    lines.splice(lines.length - 1, 1, lastLine);
-    setLines(lines.concat());
+    setLines((prev) => {
+      if (prev.length === 0) return prev;
+      const lastIndex = prev.length - 1;
+      const last = prev[lastIndex];
+      const updatedLast = {
+        ...last,
+        points: [...last.points, point.x, point.y],
+      };
+      const next = prev.slice();
+      next[lastIndex] = updatedLast;
+      return next;
+    });
   };
 
   const handleMouseUp = () => {
     isDrawing.current = false;
+  };
+
+  // Touch-specific wrappers to prevent default gestures and reuse logic
+  const handleTouchStart = (e: any) => {
+    if (e?.evt?.preventDefault) e.evt.preventDefault();
+    handleMouseDown(e);
+  };
+
+  const handleTouchMove = (e: any) => {
+    if (e?.evt?.preventDefault) e.evt.preventDefault();
+    handleMouseMove(e);
+  };
+
+  const handleTouchEnd = (e: any) => {
+    if (e?.evt?.preventDefault) e.evt.preventDefault();
+    handleMouseUp();
   };
   return (
     <>
@@ -51,14 +75,15 @@ const Whiteboard = () => {
 
       <div className="w-full h-full">
         <Stage
-          width={1000}
-          height={1000}
+          width={window.innerWidth}
+          height={window.innerHeight}
+          style={{ touchAction: "none" }}
           onMouseDown={handleMouseDown}
-          onMousemove={handleMouseMove}
-          onMouseup={handleMouseUp}
-          onTouchStart={handleMouseDown}
-          onTouchMove={handleMouseMove}
-          onTouchEnd={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <Layer>
             <Text text="Hello" />
