@@ -1,12 +1,12 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { Layer, Line, Stage, Text } from "react-konva";
-import { Button } from "@/components/ui/button";
 import { useWhiteboardStore } from "@/features/toolbar/store/WhiteboardStore";
 import { useEditorStore } from "@/features/toolbar/store/EditorStore";
 
 const Whiteboard = () => {
   const tool = useEditorStore((state) => state.tool);
+  const color = useEditorStore((state) => state.color);
   const [currentLine, setCurrentLine] = useState<number[] | null>(null);
   const lines = useWhiteboardStore((state) => state.lines);
   const addLine = useWhiteboardStore((state) => state.addLine);
@@ -20,10 +20,6 @@ const Whiteboard = () => {
     setCurrentLine([pos.x, pos.y]);
   };
 
-  const handleTrash = () => {
-    clearLines();
-  };
-
   const handleMouseMove = (e: any) => {
     if (!isDrawing.current || !currentLine) return;
     const stage = e.target.getStage();
@@ -34,7 +30,7 @@ const Whiteboard = () => {
 
   const handleMouseUp = () => {
     if (currentLine) {
-      addLine({ tool, points: currentLine });
+      addLine({ tool, points: currentLine, color });
       setCurrentLine(null);
     }
     isDrawing.current = false;
@@ -70,12 +66,11 @@ const Whiteboard = () => {
           onTouchEnd={handleTouchEnd}
         >
           <Layer>
-            <Text text="Hello" />
             {lines.map((line, i) => (
               <Line
                 key={i}
                 points={line.points}
-                stroke="#df4b26"
+                stroke={line.color}
                 strokeWidth={5}
                 tension={0.5}
                 lineCap="round"
@@ -88,7 +83,7 @@ const Whiteboard = () => {
             {currentLine && (
               <Line
                 points={currentLine}
-                stroke="#df4b26"
+                stroke={color}
                 strokeWidth={5}
                 tension={0.5}
                 lineCap="round"

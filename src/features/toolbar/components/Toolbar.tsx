@@ -24,7 +24,7 @@ const toolBarItemsData = [
 
 const Toolbar = () => {
   return (
-    <div className="absolute z-50 pointer-events-auto">
+    <div>
       <div className="flex flex-col gap-2">
         {toolBarItemsData.map((item) => (
           <item.component key={item.value} />

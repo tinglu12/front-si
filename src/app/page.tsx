@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import WhiteboardComponent from "@/features/canvas/components/Whiteboard";
 import dynamic from "next/dynamic";
 import Toolbar from "@/features/toolbar/components/Toolbar";
-
+import Sidebar from "@/features/toolbar/components/Sidebar";
 const Whiteboard = dynamic(
   () => import("@/features/canvas/components/Whiteboard"),
   {
@@ -16,8 +16,7 @@ const Whiteboard = dynamic(
 export default function Home() {
   return (
     <div>
-      <Toolbar />
-
+      <Sidebar />
       <Whiteboard />
     </div>
   );

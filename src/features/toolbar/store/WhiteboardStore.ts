@@ -4,6 +4,7 @@ import { Tool } from "../types/toolTypes";
 type Line = {
   tool: string;
   points: number[];
+  color: string;
 };
 
 export interface WhiteboardStore {
