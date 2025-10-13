@@ -2,46 +2,41 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Layer, Line, Stage, Text } from "react-konva";
 import { Button } from "@/components/ui/button";
+import { useWhiteboardStore } from "@/features/toolbar/store/WhiteboardStore";
+import { useEditorStore } from "@/features/toolbar/store/EditorStore";
 
 const Whiteboard = () => {
-  const [tool, setTool] = useState("pen");
-  const [lines, setLines] = useState<any[]>([]);
+  const tool = useEditorStore((state) => state.tool);
+  const [currentLine, setCurrentLine] = useState<number[] | null>(null);
+  const lines = useWhiteboardStore((state) => state.lines);
+  const addLine = useWhiteboardStore((state) => state.addLine);
+  const clearLines = useWhiteboardStore((state) => state.clearLines);
   const isDrawing = useRef(false);
+
   const handleMouseDown = (e: any) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
     if (!pos) return;
-    setLines((prev) => [...prev, { tool, points: [pos.x, pos.y] }]);
+    setCurrentLine([pos.x, pos.y]);
   };
 
   const handleTrash = () => {
-    setLines([]);
+    clearLines();
   };
 
   const handleMouseMove = (e: any) => {
-    // no drawing - skipping
-    if (!isDrawing.current) {
-      return;
-    }
+    if (!isDrawing.current || !currentLine) return;
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
     if (!point) return;
-
-    setLines((prev) => {
-      if (prev.length === 0) return prev;
-      const lastIndex = prev.length - 1;
-      const last = prev[lastIndex];
-      const updatedLast = {
-        ...last,
-        points: [...last.points, point.x, point.y],
-      };
-      const next = prev.slice();
-      next[lastIndex] = updatedLast;
-      return next;
-    });
+    setCurrentLine([...currentLine, point.x, point.y]);
   };
 
   const handleMouseUp = () => {
+    if (currentLine) {
+      addLine({ tool, points: currentLine });
+      setCurrentLine(null);
+    }
     isDrawing.current = false;
   };
 
@@ -62,17 +57,6 @@ const Whiteboard = () => {
   };
   return (
     <>
-      <select
-        value={tool}
-        onChange={(e) => {
-          setTool(e.target.value);
-        }}
-      >
-        <option value="pen">Pen</option>
-        <option value="eraser">Eraser</option>
-      </select>
-      <Button onClick={handleTrash}>Trash</Button>
-
       <div className="w-full h-full">
         <Stage
           width={window.innerWidth}
@@ -101,6 +85,19 @@ const Whiteboard = () => {
                 }
               />
             ))}
+            {currentLine && (
+              <Line
+                points={currentLine}
+                stroke="#df4b26"
+                strokeWidth={5}
+                tension={0.5}
+                lineCap="round"
+                lineJoin="round"
+                globalCompositeOperation={
+                  tool === "eraser" ? "destination-out" : "source-over"
+                }
+              />
+            )}
           </Layer>
         </Stage>
       </div>
