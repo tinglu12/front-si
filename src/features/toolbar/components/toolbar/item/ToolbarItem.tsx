@@ -1,6 +1,6 @@
 import React from "react";
-import { Tool } from "../types/toolTypes";
-import { useEditorStore } from "../store/EditorStore";
+import { Tool } from "../../../types/toolTypes";
+import { useEditorStore } from "../../../store/EditorStore";
 import { Button } from "@/components/ui/button";
 
 type ToolbarItemsProps = {

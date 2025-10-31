@@ -1,8 +1,8 @@
 import React from "react";
-import { Tool } from "../types/toolTypes";
-import { TOOL_CONFIG } from "../config/toolConfig";
+import { Tool } from "../../../types/toolTypes";
+import { TOOL_CONFIG } from "../../../config/toolConfig";
 import ToolbarItem from "./ToolbarItem";
-import { useEditorStore } from "../store/EditorStore";
+import { useEditorStore } from "../../../store/EditorStore";
 
 const EraserItem = () => {
   const setTool = useEditorStore((state) => state.setTool);

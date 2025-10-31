@@ -1,9 +1,9 @@
 import React from "react";
-import { Tool } from "../types/toolTypes";
-import { useEditorStore } from "../store/EditorStore";
-import { useWhiteboardStore } from "../store/WhiteboardStore";
+import { Tool } from "../../../types/toolTypes";
+import { useEditorStore } from "../../../store/EditorStore";
+import { useWhiteboardStore } from "../../../store/WhiteboardStore";
 import ToolbarItem from "./ToolbarItem";
-import { TOOL_CONFIG } from "../config/toolConfig";
+import { TOOL_CONFIG } from "../../../config/toolConfig";
 
 const LABEL = "Pen";
 

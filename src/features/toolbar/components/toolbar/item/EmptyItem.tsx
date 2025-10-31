@@ -1,8 +1,8 @@
 import React from "react";
-import { TOOL_CONFIG } from "../config/toolConfig";
-import { Tool } from "../types/toolTypes";
+import { TOOL_CONFIG } from "../../../config/toolConfig";
+import { Tool } from "../../../types/toolTypes";
 import ToolbarItem from "./ToolbarItem";
-import { useWhiteboardStore } from "../store/WhiteboardStore";
+import { useWhiteboardStore } from "../../../store/WhiteboardStore";
 
 const EmptyItem = () => {
   const clearLines = useWhiteboardStore((state) => state.clearLines);
